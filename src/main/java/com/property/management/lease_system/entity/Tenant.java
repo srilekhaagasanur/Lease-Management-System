@@ -56,6 +56,8 @@ public class Tenant {
     @Column(name = "Updated_date")
     private LocalDateTime updatedDate;
 
+
+
     // Getters and Setters (generate in IDE)
 
     public Integer getId() {
