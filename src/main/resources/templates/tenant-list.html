@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenants Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+        }
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+            font-size: 16px;
+        }
+        .breadcrumb a {
+            color: #38f9d7;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .breadcrumb a:hover {
+            color: #43e97b;
+        }
+        .search-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #d4f1e8 0%, #e0fdf5 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.2);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .search-section input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid #43e97b;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 233, 123, 0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f85032 0%, #e73827 100%);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        .btn-warning:hover {
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        tbody tr {
+            background-color: white;
+            transition: all 0.3s;
+        }
+        tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        td {
+            border-bottom: 1px solid #e9ecef;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 18px;
+        }
+        .no-data::before {
+            content: "👥";
+            display: block;
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>👥 Tenants Management</h1>
+
+    <div class="breadcrumb">
+        <a href="/">🏠 Home</a> /
+        <span>Tenants</span>
+    </div>
+
+    <div class="search-section">
+        <form method="get" action="/tenants" style="display: flex; gap: 10px; flex: 1;">
+            <input type="text" name="search" placeholder="Search by last name..."
+                   th:value="${search}" />
+            <button type="submit" class="btn">Search</button>
+            <a href="/tenants" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+
+    <a href="/tenants/new" class="btn" style="margin-bottom: 20px;">+ Add New Tenant</a>
+
+    <div th:if="${tenants.isEmpty()}" class="no-data">
+        <p>No tenants found. Click "Add New Tenant" to create one.</p>
+    </div>
+
+    <table th:if="${!tenants.isEmpty()}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Date of Birth</th>
+            <th>Emergency Contact</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tenant : ${tenants}">
+            <td th:text="${tenant.tenantId}"></td>
+            <td th:text="${tenant.fullName}" style="font-weight: 600; color: #333;"></td>
+            <td th:text="${tenant.email}"></td>
+            <td>
+                <div th:text="${tenant.phone}"></div>
+                <div th:if="${tenant.phone2 != null && !tenant.phone2.isEmpty()}"
+                     th:text="'Alt: ' + ${tenant.phone2}"
+                     style="font-size: 12px; color: #666;"></div>
+            </td>
+            <td th:text="${#dates.format(tenant.dateOfBirth, 'MM/dd/yyyy')}"></td>
+            <td>
+                <div th:if="${tenant.emergencyContactName != null && !tenant.emergencyContactName.isEmpty()}">
+                    <div th:text="${tenant.emergencyContactName}" style="font-weight: 600;"></div>
+                    <div th:if="${tenant.emergencyContactPhone != null}"
+                         th:text="${tenant.emergencyContactPhone}"
+                         style="font-size: 12px; color: #666;"></div>
+                </div>
+                <div th:if="${tenant.emergencyContactName == null || tenant.emergencyContactName.isEmpty()}"
+                     style="color: #999;">N/A</div>
+            </td>
+            <td class="actions">
+                <a th:href="@{/tenants/edit/{id}(id=${tenant.tenantId})}"
+                   class="btn btn-warning">Edit</a>
+                <a th:href="@{/tenants/delete/{id}(id=${tenant.tenantId})}"
+                   class="btn btn-danger"
+                   onclick="return confirm('Are you sure you want to delete this tenant?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

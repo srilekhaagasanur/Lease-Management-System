@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Occupant Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .section-title {
+            color: #fa709a;
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #fa709a;
+            font-weight: 600;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .required {
+            color: #fa709a;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #fa709a;
+            box-shadow: 0 0 0 3px rgba(250, 112, 154, 0.1);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(250, 112, 154, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+        .button-group {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${occupant.occupantId != null ? '✏️ Edit Occupant' : '➕ Add New Occupant'}"></h1>
+
+    <form th:action="@{/occupants/save}" method="post">
+        <input type="hidden" name="occupantId" th:value="${occupant.occupantId}" />
+
+        <!-- Unit Selection -->
+        <div class="section-title">Unit Information</div>
+
+        <div class="form-group">
+            <label for="unitId">Unit <span class="required">*</span></label>
+            <select id="unitId" name="unitId" required>
+                <option value="">-- Select Unit --</option>
+                <option th:each="unit : ${units}"
+                        th:value="${unit.unitId}"
+                        th:text="${unit.property.propertyName + ' - Unit ' + unit.unitNumber}"
+                        th:selected="${occupant.unit != null && occupant.unit.unitId == unit.unitId}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="section-title">Personal Information</div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="firstName">First Name <span class="required">*</span></label>
+                <input type="text" id="firstName" name="firstName"
+                       th:value="${occupant.firstName}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name <span class="required">*</span></label>
+                <input type="text" id="lastName" name="lastName"
+                       th:value="${occupant.lastName}" required />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="relationshipToTenant">Relationship to Tenant <span class="required">*</span></label>
+                <input type="text" id="relationshipToTenant" name="relationshipToTenant"
+                       th:value="${occupant.relationshipToTenant}"
+                       placeholder="e.g., Spouse, Child, Roommate" required />
+            </div>
+
+            <div class="form-group">
+                <label for="dateOfBirth">Date of Birth</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth"
+                       th:value="${occupant.dateOfBirth != null ? #dates.format(occupant.dateOfBirth, 'yyyy-MM-dd') : ''}" />
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="section-title">Contact Information</div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone"
+                       th:value="${occupant.phone}"
+                       placeholder="e.g., 6175551234" />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email"
+                       th:value="${occupant.email}"
+                       placeholder="occupant@example.com" />
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="section-title">Additional Information</div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="occupation">Occupation</label>
+                <input type="text" id="occupation" name="occupation"
+                       th:value="${occupant.occupation}" />
+            </div>
+
+            <div class="form-group">
+                <label for="vehicleInfo">Vehicle Information</label>
+                <input type="text" id="vehicleInfo" name="vehicleInfo"
+                       th:value="${occupant.vehicleInfo}"
+                       placeholder="e.g., 2020 Honda Civic, Plate: ABC123" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes"
+                      placeholder="Any additional information about the occupant"
+                      th:text="${occupant.notes}"></textarea>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn">Save Occupant</button>
+            <a href="/occupants" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

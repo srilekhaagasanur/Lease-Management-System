@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            max-width: 1200px;
+            width: 100%;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 20px;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: translateX(0);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .card p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .card.properties {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card.units {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .card.tenants {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .card.leases {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="icon">🏢</div>
+        <h1>Property Management System</h1>
+        <p class="subtitle">Efficiently manage your properties, units, tenants, and leases</p>
+    </div>
+
+    <div class="cards-grid">
+        <a href="/properties" class="card properties">
+            <span class="card-icon">🏘️</span>
+            <h2>Properties</h2>
+            <p>Manage your real estate portfolio with detailed property information and owner contacts</p>
+        </a>
+
+        <a href="/units" class="card units">
+            <span class="card-icon">🏠</span>
+            <h2>Units</h2>
+            <p>Track rental units, availability, specifications, and rental rates</p>
+        </a>
+
+        <a href="/tenants" class="card tenants">
+            <span class="card-icon">👥</span>
+            <h2>Tenants</h2>
+            <p>Maintain tenant records, contact information, and emergency contacts</p>
+        </a>
+
+        <a href="/leases" class="card leases">
+            <span class="card-icon">📋</span>
+            <h2>Leases</h2>
+            <p>Monitor lease agreements, track dates, payments, and lease status</p>
+        </a>
+
+        <a href="/payments" class="card"
+           style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+            <span class="card-icon">💰</span>
+            <h2>Payments</h2>
+            <p>Track rent payments, payment history, and identify overdue accounts</p>
+        </a>
+
+        <a href="/maintenance" class="card"
+           style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">
+            <span class="card-icon">🔧</span>
+            <h2>Maintenance</h2>
+            <p>Track maintenance requests, prioritize issues, and monitor repair status</p>
+        </a>
+
+        <a href="/occupants" class="card"
+           style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <span class="card-icon">👥</span>
+            <h2>Occupants</h2>
+            <p>Manage additional residents, family members, and roommates in rental units</p>
+        </a>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <span class="stat-number">🎯</span>
+            <span class="stat-label">All-in-One</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">⚡</span>
+            <span class="stat-label">Fast & Efficient</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">🔒</span>
+            <span class="stat-label">Secure</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">📊</span>
+            <span class="stat-label">Organized</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 Property Management System | Built with Spring Boot & Hibernate</p>
+    </div>
+</div>
+</body>
+</html>
